@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cronos-Valor 2030</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <div class="bg-grid"></div>
+
+  <header>
+    <div class="logo-block">
+      <span class="logo-icon">⬡</span>
+      <div>
+        <h1>CRONOS<span class="accent">-VALOR</span></h1>
+        <p class="tagline">Simulador Econométrico México 2030</p>
+      </div>
+    </div>
+    <div class="badge">INPC · MXN · BANXICO</div>
+  </header>
+
+  <main>
+    <section class="panel input-panel">
+      <div class="panel-header">
+        <span class="panel-icon">◈</span>
+        <h2>Parámetros de Simulación</h2>
+      </div>
+
+      <div class="form-grid">
+        <div class="field-group">
+          <label for="monto">Monto Original (MXN)</label>
+          <div class="input-wrap">
+            <span class="input-prefix">$</span>
+            <input type="number" id="monto" placeholder="0.00" min="0.01" step="0.01" />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label for="anio-origen">Año de Origen</label>
+          <input type="number" id="anio-origen" placeholder="1970" min="1970" max="2030" />
+        </div>
+
+        <div class="field-group">
+          <label for="anio-destino">Año Destino</label>
+          <input type="number" id="anio-destino" placeholder="2024" min="1970" max="2030" />
+        </div>
+      </div>
+
+      <button id="btn-calcular" onclick="calcular()">
+        <span class="btn-icon">▶</span> CALCULAR VALOR
+      </button>
+
+      <div id="error-msg" class="error-msg hidden"></div>
+    </section>
+
+    <section class="panel result-panel" id="result-panel">
+      <div class="panel-header">
+        <span class="panel-icon">◉</span>
+        <h2>Resultado</h2>
+      </div>
+      <div class="result-grid" id="result-grid">
+        <div class="stat-card">
+          <span class="stat-label">Valor Original</span>
+          <span class="stat-value" id="res-original">—</span>
+        </div>
+        <div class="stat-card accent-card">
+          <span class="stat-label">Valor Equivalente</span>
+          <span class="stat-value neon" id="res-final">—</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Inflación Acumulada</span>
+          <span class="stat-value" id="res-inflacion">—</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Reforma Monetaria</span>
+          <span class="stat-value" id="res-reforma">—</span>
+        </div>
+      </div>
+      <div id="nota-proyeccion" class="nota hidden">
+        ★ Proyección 2025–2030 calculada con interés compuesto al <strong>4.5% anual</strong>
+      </div>
+    </section>
+
+    <section class="panel chart-panel">
+      <div class="panel-header">
+        <span class="panel-icon">◫</span>
+        <h2>Curva INPC Histórico</h2>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="grafica"></canvas>
+      </div>
+    </section>
+
+    <section class="panel table-panel">
+      <div class="panel-header">
+        <span class="panel-icon">▦</span>
+        <h2>Base de Datos INPC</h2>
+      </div>
+      <div class="table-scroll">
+        <table id="tabla-inpc">
+          <thead>
+            <tr>
+              <th>Año</th>
+              <th>INPC</th>
+              <th>Inflación Anual</th>
+              <th>Nota</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>CRONOS-VALOR 2030 · Datos BANXICO / INEGI · Uso educativo</span>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
