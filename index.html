@@ -43,7 +43,7 @@
 
       <div class="form-grid">
         <div class="field-group">
-          <label for="monto">Monto Original (MXN)</label>
+          <label for="monto">Monto Original Nominal</label>
           <div class="input-wrap">
             <span class="input-prefix">$</span>
             <input type="number" id="monto" placeholder="0.00" min="0.01" step="0.01" />
@@ -60,22 +60,10 @@
               <input type="number" class="input-styled" id="anio-destino" placeholder="2024" min="1970" max="2030" />
             </div>
         </div>
-
-        <!-- Nuevo Switch para anular los 3 ceros -->
-        <div class="field-group switch-group">
-          <div class="switch-text">
-            <label>Reconversión Monetaria (-3 Ceros)</label>
-            <p class="tagline">Simula la transición a Nuevos Pesos</p>
-          </div>
-          <label class="switch">
-            <input type="checkbox" id="toggle-ceros">
-            <span class="slider"></span>
-          </label>
-        </div>
       </div>
 
       <button id="btn-calcular" onclick="calcular()">
-        <span class="btn-icon">▶</span> CALCULAR VALOR
+        <span class="btn-icon">▶</span> CALCULAR VALOR REAL
       </button>
 
       <div id="error-msg" class="error-msg hidden"></div>
@@ -92,7 +80,7 @@
           <span class="stat-value" id="res-original">—</span>
         </div>
         <div class="stat-card accent-card">
-          <span class="stat-label">Valor Real / Equivalente</span>
+          <span class="stat-label">Valor Equivalente (Nuevos Pesos)</span>
           <span class="stat-value neon" id="res-final">—</span>
         </div>
         <div class="stat-card">
@@ -100,7 +88,7 @@
           <span class="stat-value" id="res-inflacion">—</span>
         </div>
         <div class="stat-card">
-          <span class="stat-label">Reforma Monetaria</span>
+          <span class="stat-label">Ajuste Reforma 1993</span>
           <span class="stat-value" id="res-reforma">—</span>
         </div>
       </div>
