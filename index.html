@@ -6,6 +6,7 @@
   <title>Cronos-Valor 2030</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <link rel="manifest" href="manifest.json">
 </head>
 <body>
 
@@ -23,19 +24,16 @@
   </header>
 
   <main>
-    <section>
-        <h1>Simulador de Inflación</h1>
-        <p>Bienvenido al futuro de tus finanzas...</p>
+    <section style="text-align: center; margin-bottom: 20px;">
+        <h1 style="font-family: var(--font-mono); color: var(--neon); font-size: 1.5rem; margin-bottom: 10px;">Simulador de Inflación</h1>
+        <p style="color: var(--text-dim);">Bienvenido al futuro de tus finanzas...</p>
+        
+        <div class="apk-download-container">
+            <a href="app-debug.apk" download="CronosValor_2030.apk" class="btn-apk">
+                <span class="btn-icon">📥</span> DESCARGAR APP APK
+            </a>
+        </div>
     </section>
-
-    <div style="text-align: center; margin: 40px 0; padding: 20px; border-top: 1px solid #eee;">
-        <p style="font-family: sans-serif; color: #555;">¡Lleva el simulador en tu celular!</p>
-        <a href="app-debug.apk" download="CronosValor_2030.apk" style="text-decoration: none;">
-            <button style="padding: 15px 30px; background-color: #28a745; color: white; border: none; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(40,167,69,0.3);">
-                📥 Descargar APK
-            </button>
-        </a>
-    </div>
     
     <section class="panel input-panel">
       <div class="panel-header">
@@ -52,14 +50,27 @@
           </div>
         </div>
 
-        <div class="field-group">
-          <label for="anio-origen">Año de Origen</label>
-          <input type="number" id="anio-origen" placeholder="1970" min="1970" max="2030" />
+        <div class="field-group" style="display: flex; gap: 10px;">
+            <div style="flex: 1;">
+              <label for="anio-origen">Año Origen</label>
+              <input type="number" class="input-styled" id="anio-origen" placeholder="1970" min="1970" max="2030" />
+            </div>
+            <div style="flex: 1;">
+              <label for="anio-destino">Año Destino</label>
+              <input type="number" class="input-styled" id="anio-destino" placeholder="2024" min="1970" max="2030" />
+            </div>
         </div>
 
-        <div class="field-group">
-          <label for="anio-destino">Año Destino</label>
-          <input type="number" id="anio-destino" placeholder="2024" min="1970" max="2030" />
+        <!-- Nuevo Switch para anular los 3 ceros -->
+        <div class="field-group switch-group">
+          <div class="switch-text">
+            <label>Reconversión Monetaria (-3 Ceros)</label>
+            <p class="tagline">Simula la transición a Nuevos Pesos</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="toggle-ceros">
+            <span class="slider"></span>
+          </label>
         </div>
       </div>
 
@@ -81,7 +92,7 @@
           <span class="stat-value" id="res-original">—</span>
         </div>
         <div class="stat-card accent-card">
-          <span class="stat-label">Valor Equivalente</span>
+          <span class="stat-label">Valor Real / Equivalente</span>
           <span class="stat-value neon" id="res-final">—</span>
         </div>
         <div class="stat-card">
