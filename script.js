@@ -5,12 +5,6 @@
 
 'use strict';
 
-/* ── BASE DE DATOS INPC (Índice Nacional de Precios al Consumidor) ──
-   Fuente: BANXICO / INEGI
-   * Los valores anteriores a 1993 están en pesos "viejos" (antes de la
-     Reforma Monetaria de 1993 que dividió entre 1,000).
-   * A partir de 1993 los valores están en "nuevos pesos".
-   ─────────────────────────────────────────────────────────────── */
 const DB_INPC = [
   { anio: 1970, inpc:   0.0172, nota: 'Base histórica'   },
   { anio: 1975, inpc:   0.0348, nota: ''                  },
@@ -33,28 +27,21 @@ const DB_INPC = [
   { anio: 2024, inpc:  73.0600, nota: 'Último dato real'  },
 ];
 
-/* Tasa de proyección para 2025-2030 */
 const TASA_PROYECCION = 0.045;
 const ANIO_MAX_REAL   = 2024;
 const ANIO_MIN        = 1970;
 const ANIO_MAX        = 2030;
 
-/* ── UTILIDADES ── */
-
-/** Devuelve el INPC interpolado para un año dado (real o proyectado). */
 function getINPC(anio) {
   if (anio <= ANIO_MAX_REAL) {
     return interpolarINPC(anio);
   }
-  /* Proyección con interés compuesto desde 2024 */
   const inpc2024 = interpolarINPC(ANIO_MAX_REAL);
   const n        = anio - ANIO_MAX_REAL;
   return inpc2024 * Math.pow(1 + TASA_PROYECCION, n);
 }
 
-/** Interpolación lineal entre los puntos de la base de datos. */
 function interpolarINPC(anio) {
-  /* Búsqueda del intervalo exacto */
   for (let i = 0; i < DB_INPC.length - 1; i++) {
     const p1 = DB_INPC[i];
     const p2 = DB_INPC[i + 1];
@@ -63,24 +50,17 @@ function interpolarINPC(anio) {
       return p1.inpc + t * (p2.inpc - p1.inpc);
     }
   }
-  /* Fuera del rango: devuelve extremos */
-  if (anio <= DB_INPC[0].anio)                  return DB_INPC[0].inpc;
+  if (anio <= DB_INPC[0].anio) return DB_INPC[0].inpc;
   if (anio >= DB_INPC[DB_INPC.length - 1].anio) return DB_INPC[DB_INPC.length - 1].inpc;
 }
 
-/** Decide si se aplica la reforma monetaria (origen < 1993, destino >= 1993). */
-function aplicaReforma(origen, destino) {
-  return origen < 1993 && destino >= 1993;
-}
-
-/** Formatea número a moneda MXN. */
-function formatMXN(n) {
-  return new Intl.NumberFormat('es-MX', {
+function formatMXN(n, esReconversion = false) {
+  let moneda = new Intl.NumberFormat('es-MX', {
     style: 'currency', currency: 'MXN', maximumFractionDigits: 4
   }).format(n);
+  return esReconversion ? moneda + " (Nuevos Pesos)" : moneda;
 }
 
-/** Muestra u oculta el mensaje de error. */
 function setError(msg) {
   const el = document.getElementById('error-msg');
   if (msg) {
@@ -91,16 +71,28 @@ function setError(msg) {
   }
 }
 
-/* ── LÓGICA PRINCIPAL ── */
+// Event Listeners para automatizar el Switch si cruzan el año 1993
+document.getElementById('anio-origen').addEventListener('input', evaluarCruceReforma);
+document.getElementById('anio-destino').addEventListener('input', evaluarCruceReforma);
+
+function evaluarCruceReforma() {
+    const origen = parseInt(document.getElementById('anio-origen').value, 10);
+    const destino = parseInt(document.getElementById('anio-destino').value, 10);
+    const toggle = document.getElementById('toggle-ceros');
+    
+    if (origen < 1993 && destino >= 1993) {
+        toggle.checked = true; // Activa el switch automáticamente
+    }
+}
+
 function calcular() {
   setError(null);
 
-  /* Leer entradas */
   const montoRaw   = document.getElementById('monto').value.trim();
   const origenRaw  = document.getElementById('anio-origen').value.trim();
   const destinoRaw = document.getElementById('anio-destino').value.trim();
+  const toggleCeros = document.getElementById('toggle-ceros').checked; // Lee el estado del switch
 
-  /* Validar nulos */
   if (!montoRaw || !origenRaw || !destinoRaw) {
     setError('Todos los campos son obligatorios. Por favor, complétalos.');
     return;
@@ -110,13 +102,11 @@ function calcular() {
   const origen  = parseInt(origenRaw, 10);
   const destino = parseInt(destinoRaw, 10);
 
-  /* Validar negativos / cero */
   if (isNaN(monto) || monto <= 0) {
     setError('El monto debe ser un valor positivo mayor a cero.');
     return;
   }
 
-  /* Validar rango de años */
   if (isNaN(origen) || origen < ANIO_MIN || origen > ANIO_MAX) {
     setError(`El año de origen debe estar entre ${ANIO_MIN} y ${ANIO_MAX}.`);
     return;
@@ -126,14 +116,11 @@ function calcular() {
     return;
   }
 
-  /* ── CÁLCULO ── */
   let montoAjustado = monto;
-  let reformaAplicada = false;
 
-  /* Reforma monetaria de 1993 */
-  if (aplicaReforma(origen, destino)) {
-    montoAjustado   = montoAjustado / 1000;
-    reformaAplicada = true;
+  /* Lógica vinculada al Switch Manual */
+  if (toggleCeros) {
+    montoAjustado = montoAjustado / 1000;
   }
 
   const inpcOrigen  = getINPC(origen);
@@ -142,14 +129,17 @@ function calcular() {
   const valorFinal  = montoAjustado * factor;
   const infAcum     = ((factor - 1) * 100).toFixed(2);
 
-  /* Mostrar resultados */
   document.getElementById('res-original').textContent  = formatMXN(monto);
-  document.getElementById('res-final').textContent     = formatMXN(valorFinal);
+  document.getElementById('res-final').textContent     = formatMXN(valorFinal, toggleCeros);
   document.getElementById('res-inflacion').textContent = `${infAcum}%`;
-  document.getElementById('res-reforma').textContent   = reformaAplicada
-    ? '✔ Dividido ÷ 1,000' : '— No aplicó';
+  
+  const spanReforma = document.getElementById('res-reforma');
+  if (toggleCeros) {
+      spanReforma.innerHTML = '✔ Activa <span style="color: var(--neon2);">(-3 ceros)</span>';
+  } else {
+      spanReforma.textContent = '— Inactiva';
+  }
 
-  /* Nota proyección */
   const nota = document.getElementById('nota-proyeccion');
   if (destino > ANIO_MAX_REAL) {
     nota.classList.remove('hidden');
@@ -157,15 +147,12 @@ function calcular() {
     nota.classList.add('hidden');
   }
 
-  /* Actualizar gráfica con rango del cálculo */
   dibujarGrafica(origen, destino);
 }
 
-/* ── GRÁFICA ── */
 let chartInstance = null;
 
 function dibujarGrafica(origenDestacado, destinoDestacado) {
-  /* Generar puntos: años cada 2 desde 1970 hasta 2030 */
   const labels = [];
   const datos  = [];
   for (let y = 1970; y <= 2030; y += 2) {
@@ -175,7 +162,6 @@ function dibujarGrafica(origenDestacado, destinoDestacado) {
 
   const ctx = document.getElementById('grafica').getContext('2d');
 
-  /* Destruir instancia anterior para evitar overlap */
   if (chartInstance) {
     chartInstance.destroy();
     chartInstance = null;
@@ -250,12 +236,10 @@ function dibujarGrafica(origenDestacado, destinoDestacado) {
   });
 }
 
-/* ── TABLA INPC ── */
 function llenarTabla() {
   const tbody = document.getElementById('tabla-body');
   tbody.innerHTML = '';
 
-  /* Combinar datos reales + proyecciones anuales de 2025-2030 */
   const filas = [...DB_INPC];
   for (let y = 2025; y <= 2030; y++) {
     filas.push({ anio: y, inpc: getINPC(y), nota: 'Proyección' });
@@ -287,7 +271,6 @@ function llenarTabla() {
   });
 }
 
-/* ── INICIO ── */
 document.addEventListener('DOMContentLoaded', () => {
   llenarTabla();
   dibujarGrafica(1970, 2024);
