@@ -54,11 +54,10 @@ function interpolarINPC(anio) {
   if (anio >= DB_INPC[DB_INPC.length - 1].anio) return DB_INPC[DB_INPC.length - 1].inpc;
 }
 
-function formatMXN(n, esReconversion = false) {
-  let moneda = new Intl.NumberFormat('es-MX', {
+function formatMXN(n) {
+  return new Intl.NumberFormat('es-MX', {
     style: 'currency', currency: 'MXN', maximumFractionDigits: 4
   }).format(n);
-  return esReconversion ? moneda + " (Nuevos Pesos)" : moneda;
 }
 
 function setError(msg) {
@@ -71,27 +70,12 @@ function setError(msg) {
   }
 }
 
-// Event Listeners para automatizar el Switch si cruzan el año 1993
-document.getElementById('anio-origen').addEventListener('input', evaluarCruceReforma);
-document.getElementById('anio-destino').addEventListener('input', evaluarCruceReforma);
-
-function evaluarCruceReforma() {
-    const origen = parseInt(document.getElementById('anio-origen').value, 10);
-    const destino = parseInt(document.getElementById('anio-destino').value, 10);
-    const toggle = document.getElementById('toggle-ceros');
-    
-    if (origen < 1993 && destino >= 1993) {
-        toggle.checked = true; // Activa el switch automáticamente
-    }
-}
-
 function calcular() {
   setError(null);
 
   const montoRaw   = document.getElementById('monto').value.trim();
   const origenRaw  = document.getElementById('anio-origen').value.trim();
   const destinoRaw = document.getElementById('anio-destino').value.trim();
-  const toggleCeros = document.getElementById('toggle-ceros').checked; // Lee el estado del switch
 
   if (!montoRaw || !origenRaw || !destinoRaw) {
     setError('Todos los campos son obligatorios. Por favor, complétalos.');
@@ -116,28 +100,29 @@ function calcular() {
     return;
   }
 
-  let montoAjustado = monto;
-
-  /* Lógica vinculada al Switch Manual */
-  if (toggleCeros) {
-    montoAjustado = montoAjustado / 1000;
-  }
-
+  /* 
+    REGLA ECONÓMICA ESTRICTA APLICADA: 
+    Se toma el monto nominal directo sin dividir entre 1000.
+    La tabla INPC ya contempla la reforma de 1993 retroactivamente.
+  */
   const inpcOrigen  = getINPC(origen);
   const inpcDestino = getINPC(destino);
   const factor      = inpcDestino / inpcOrigen;
-  const valorFinal  = montoAjustado * factor;
+  
+  // Fórmula estándar
+  const valorFinal  = monto * factor; 
   const infAcum     = ((factor - 1) * 100).toFixed(2);
 
   document.getElementById('res-original').textContent  = formatMXN(monto);
-  document.getElementById('res-final').textContent     = formatMXN(valorFinal, toggleCeros);
+  document.getElementById('res-final').textContent     = formatMXN(valorFinal);
   document.getElementById('res-inflacion').textContent = `${infAcum}%`;
   
+  // Notificación de la Reforma Monetaria
   const spanReforma = document.getElementById('res-reforma');
-  if (toggleCeros) {
-      spanReforma.innerHTML = '✔ Activa <span style="color: var(--neon2);">(-3 ceros)</span>';
+  if (origen < 1993 && destino >= 1993) {
+      spanReforma.innerHTML = '✔ Implícito en INPC';
   } else {
-      spanReforma.textContent = '— Inactiva';
+      spanReforma.textContent = '— No aplica';
   }
 
   const nota = document.getElementById('nota-proyeccion');
