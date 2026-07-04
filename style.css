@@ -432,7 +432,7 @@ footer {
   .result-grid { grid-template-columns: 1fr; }
   header h1 { font-size: 1.2rem; }
 }
-/* ── ESTILOS AÑADIDOS PARA EL SWITCH Y EL BOTÓN APK ── */
+/* ── ESTILOS AÑADIDOS PARA INPUTS Y BOTÓN APK ── */
 
 .input-styled {
   width: 100%;
@@ -450,70 +450,6 @@ footer {
 .input-styled:focus {
   border-color: var(--neon);
   box-shadow: var(--glow);
-}
-
-/* Contenedor del Switch de Reconversión */
-.switch-group {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(0,229,255,.05);
-  padding: 12px;
-  border-radius: var(--radius);
-  border: 1px dashed var(--border);
-}
-
-.switch-text label {
-  color: var(--neon);
-  font-weight: bold;
-  margin-bottom: 2px;
-}
-
-/* El Switch */
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 50px;
-  height: 24px;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: var(--bg3);
-  transition: .4s;
-  border-radius: 24px;
-  border: 1px solid var(--border);
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 16px;
-  width: 16px;
-  left: 4px;
-  bottom: 3px;
-  background-color: var(--text-dim);
-  transition: .4s;
-  border-radius: 50%;
-}
-
-input:checked + .slider {
-  background-color: rgba(0, 255, 157, 0.2);
-  border-color: var(--neon2);
-  box-shadow: var(--glow2);
-}
-
-input:checked + .slider:before {
-  transform: translateX(24px);
-  background-color: var(--neon2);
 }
 
 /* Botón APK rediseñado */
