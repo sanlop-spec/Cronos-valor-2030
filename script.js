@@ -65,9 +65,17 @@ function setError(msg) {
   if (msg) {
     el.textContent = '⚠ ' + msg;
     el.classList.remove('hidden');
+    resetResultadosUI(); // Limpia los datos si hay error
   } else {
     el.classList.add('hidden');
   }
+}
+
+function resetResultadosUI() {
+  document.getElementById('res-original').textContent  = '—';
+  document.getElementById('res-final').textContent     = '—';
+  document.getElementById('res-inflacion').textContent = '—';
+  document.getElementById('res-reforma').textContent   = '—';
 }
 
 function calcular() {
@@ -256,7 +264,33 @@ function llenarTabla() {
   });
 }
 
+// ============================================================
+// INICIALIZACIÓN Y MANEJO DE EVENTOS
+// ============================================================
 document.addEventListener('DOMContentLoaded', () => {
   llenarTabla();
   dibujarGrafica(1970, 2024);
+  
+  // 1. Autofocus en el campo monto al cargar la página
+  const montoInput = document.getElementById('monto');
+  if (montoInput) {
+      montoInput.focus();
+  }
+
+  // 2. Soporte para presionar "Enter" en cualquier campo
+  const inputs = document.querySelectorAll('#monto, #anio-origen, #anio-destino');
+  inputs.forEach(input => {
+    input.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault(); // Evita que se recargue la página
+        calcular();
+      }
+    });
+  });
+
+  // 3. Vincular el botón Calcular
+  const btnCalcular = document.getElementById('btn-calcular');
+  if (btnCalcular) {
+      btnCalcular.addEventListener('click', calcular);
+  }
 });
