@@ -1,0 +1,15 @@
+{
+  "name": "Cronos-valor 2030",
+  "short_name": "CronosValor",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#050c14",
+  "theme_color": "#00e5ff",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
