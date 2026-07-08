@@ -32,6 +32,7 @@ jobs:
         run: |
           mkdir -p www
           cp -r index.html css js manifest.json www/ 2>/dev/null || true
+          npx cap add android || true
           npx cap sync
 
       - name: Build APK with Gradle
