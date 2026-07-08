@@ -3,43 +3,45 @@ name: Build Android APK
 on:
   push:
     branches:
-      - main  # Se activa cada vez que subes cambios a la rama main
+      - actualizacion
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Source Code
-      uses: actions/checkout@v4
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20
-        cache: 'npm'
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-    - name: Install Dependencies
-      run: |
+      - name: Install Dependencies
+        run: |
+          cd NewC
           npm ci --no-bin-links || npm install --no-bin-links
 
-    - name: Set up JDK 17 (Requerido para Android)
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'zulu'
-        java-version: '17'
+      - name: Set up JDK 17 (Requerido para Android)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
 
-    - name: Sync Capacitor
-      run: npx cap sync android
+      - name: Sync Capacitor
+        run: |
+          cd NewC
+          npx cap sync
 
-    - name: Build APK with Gradle
-      run: |
-        cd android
-        chmod +x gradlew
-        ./gradlew assembleDebug
+      - name: Build APK with Gradle
+        run: |
+          cd NewC/android
+          ./gradlew assembleDebug
 
-    - name: Upload APK Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: CronosValor-App
-        path: android/app/build/outputs/apk/debug/app-debug.apk
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CronosValor-App
+          path: NewC/android/app/build/outputs/apk/debug/app-debug.apk
