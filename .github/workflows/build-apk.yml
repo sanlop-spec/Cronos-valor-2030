@@ -20,7 +20,8 @@ jobs:
         cache: 'npm'
 
     - name: Install Dependencies
-      run: npm install --no-bin-links
+      run: |
+          npm ci --no-bin-links || npm install --no-bin-links
 
     - name: Set up JDK 17 (Requerido para Android)
       uses: actions/setup-java@v4
