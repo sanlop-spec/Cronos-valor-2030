@@ -1,6 +1,16 @@
 {
-  "name": "NewC",
-  "lockfileVersion": 3,
-  "requires": true,
-  "packages": {}
+  "name": "cronos-valor-2030",
+  "version": "1.0.0",
+  "description": "Simulación financiera",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/core": "^6.0.0"
+  }
 }
