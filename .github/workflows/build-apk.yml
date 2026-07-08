@@ -29,7 +29,7 @@ jobs:
           java-version: '17'
 
       - name: Sync Capacitor
-        run: npx cap sync
+        run: ./node_modules/.bin/cap sync
 
       - name: Build APK with Gradle
         run: |
