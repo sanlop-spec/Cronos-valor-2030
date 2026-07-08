@@ -1,0 +1,6 @@
+{
+  "appId": "com.cronosvalor.app",
+  "appName": "Cronos-valor 2030",
+  "webDir": "./",
+  "bundledWebRuntime": false
+}
