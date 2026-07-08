@@ -29,7 +29,10 @@ jobs:
           java-version: '17'
 
       - name: Sync Capacitor
-        run: npx cap sync
+        run: |
+          mkdir -p www
+          cp -r index.html css js manifest.json www/ 2>/dev/null || true
+          npx cap sync
 
       - name: Build APK with Gradle
         run: |
